@@ -44,6 +44,13 @@ sudo bash -c "echo $VGPU_UUID > /sys/devices/pci0000:00/0000:$PCI_ID/mdev_suppor
 ```
 You can also generate an vGPU automatically on startup by editing and using the systemd service included with this document.
 
+## Udev rules
+
+We'll add a udev rule so we can run qemu with the vGPU without root. Create `/etc/udev/rules.d/10-qemu.rules` with this content.
+```
+SUBSYSTEM=="vfio", OWNER="root", GROUP="kvm"
+```
+
 ## Qemu setup
 
 For the qemu setup the most important option is the machine type. We have the option between i440fx (BIOS) and q35 (UEFI). 
@@ -94,7 +101,7 @@ qemu-system-x86_64 \
     -net nic,model=e1000 \
     -net user
 ```
-The `vbios_gvt_uefi.rom` is included in this repo. It's sourced from this patch (TODO link) which can alternatively be applied to i915.
+The `vbios_gvt_uefi.rom` is included in this repo. It's sourced from [this patch](https://bugzilla.tianocore.org/show_bug.cgi?id=935#c12) which can alternatively be applied to i915.
 
 In this repo are also 2 allready prepared shell scripts.
 
